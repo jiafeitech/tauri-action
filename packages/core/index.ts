@@ -97,6 +97,7 @@ export function execCommand(
   args: string[],
   { cwd }: { cwd?: string } = {}
 ): Promise<void> {
+  console.log(`Using jiafeitech's tauri-action`);
   console.log(`running ${command}`, args);
   return execa(command, args, {
     cwd,
@@ -397,11 +398,14 @@ export async function buildProject(
         .then(() => {
           let fileAppName = app.name;
           // on Linux, the app product name is converted to kebab-case
+          // letter Λ and λ will get replaced with - on Linux
           if (!['darwin', 'win32'].includes(platform())) {
             fileAppName = fileAppName
               .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
               .replace(/([A-Z])([A-Z])(?=[a-z])/g, '$1-$2')
               .replace(/[ _.]/g, '-')
+              .replace(/[ Λ.]/g, '-')
+              .replace(/[ λ.]/g, '-')
               .toLowerCase();
           }
 
